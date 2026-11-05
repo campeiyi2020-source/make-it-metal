@@ -1,0 +1,446 @@
+<title>Let’s Make It Metal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/*
+  Layout concept: follow snowx.com. A black top bar with the white wordmark and an
+  orange pill button, a soft warm-grey ground, white rounded cards, one orange accent.
+  The rules page is the landing page. The copyright page is deliberately plain text.
+  Both pages live in this one file and switch on the URL hash (#rules, #copyright),
+  so they share one stylesheet and each keeps its own link.
+  Single light look on purpose: the official site is light, so there are no dark blocks.
+*/
+:root {
+  color-scheme: light;
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --bg: #E6E3E0;        /* warm grey, matches the site's hero ground */
+  --bg-top: #F1EFED;
+  --surface: #FFFFFF;
+  --ink: #1A1816;
+  --muted: #5C5754;
+  --line: #CFCAC6;
+  --black: #0B0B0B;      /* top bar */
+  --accent: #FF4D00;     /* SnowX orange, fills and buttons */
+  --accent-text: #B33300; /* darker orange so orange text and links stay readable */
+  --accent-ink: #FFFFFF;
+  --accent-soft: #FFE6DA;
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; }
+body {
+  background-color: var(--bg);
+  background-image: linear-gradient(180deg, var(--bg-top) 0%, var(--bg) 55%);
+  color: var(--ink);
+  font: 400 1rem/1.6 var(--font);
+}
+/* Paints the phone status-bar area black so it reads as part of the top bar */
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  background: var(--black); z-index: 10;
+}
+/* Gutter is set once per band, on its inner wrapper */
+.wrap {
+  max-width: 1120px; margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--accent-text); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px;
+}
+p { margin: 0 0 1rem; max-width: 65ch; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+h2 { font-weight: 700; font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.01em; }
+h3 { font-weight: 600; font-size: 1.02rem; line-height: 1.4; margin-bottom: 0.25rem; }
+.label { font: 600 0.72rem/1.3 var(--font); letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+.fine { font-size: 0.88rem; color: var(--muted); }
+
+/* ---------- Top bar ---------- */
+.bar { background: var(--black); }
+.bar-in { display: flex; flex-wrap: wrap; align-items: center; gap: 0.9rem 2rem; padding-block: 1.1rem; }
+.logo { display: block; order: 1; }
+.logo img { display: block; width: 144px; height: auto; }
+.bar .btn { order: 2; margin-left: auto; }
+.tabs { order: 3; flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; }
+.tabs a { color: #B9B4AF; text-decoration: none; font-weight: 500; font-size: 0.95rem; padding-block: 0.25rem; }
+.tabs a:hover { color: #FFFFFF; }
+.tabs a[aria-current="page"] { color: #FFFFFF; font-weight: 600; }
+@media (min-width: 820px) {
+  .tabs { order: 2; flex-basis: auto; margin-inline: auto; gap: 0 2.5rem; }
+  .bar .btn { order: 3; margin-left: 0; }
+}
+
+/* ---------- Buttons: pills, like SUBSCRIBE and SIGN UP NOW on the site ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; text-decoration: none;
+  font: 700 0.9rem/1 var(--font); letter-spacing: 0.01em; text-transform: uppercase;
+  padding: 0.95rem 1.7rem; border-radius: 999px; background: var(--accent); color: var(--accent-ink);
+  border: 0; text-align: center;
+}
+.btn:hover { filter: brightness(1.07); }
+.btn.sm { padding: 0.75rem 1.3rem; font-size: 0.82rem; }
+.btn.light { background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14); }
+.btn.dark { background: var(--black); color: #FFFFFF; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block: 1.5rem 1rem; }
+
+/* ---------- Rules page hero ---------- */
+.hero { display: grid; gap: 2.5rem; padding-block: 3rem; }
+.hero > * { min-width: 0; max-width: 720px; }
+.hero h1 { font-weight: 700; font-size: clamp(2.5rem, 7.5vw, 4.6rem); line-height: 1.04; letter-spacing: -0.025em; margin-block: 0.6rem 0.9rem; }
+.tagline { font-weight: 600; font-size: 1.25rem; line-height: 1.3; margin: 0 0 1rem; }
+.lede { font-size: 1.05rem; color: var(--muted); }
+
+/* Offer card: orange slanted half and a white half, after the launch offer on snowx.com */
+.offer { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); background: var(--surface); border-radius: var(--radius); overflow: hidden; box-shadow: 0 2px 14px rgba(0, 0, 0, 0.08); margin-block: 1.5rem; max-width: 560px; }
+.offer-a { background: linear-gradient(135deg, #FF5C14, #F24200); color: #FFFFFF; padding: 1.1rem 2.4rem 1.1rem 1.4rem; clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%); }
+.offer-b { padding: 1.1rem 1.4rem 1.1rem 0.4rem; }
+.offer strong { display: block; font-weight: 700; font-size: 1.45rem; line-height: 1.15; letter-spacing: -0.01em; margin-block: 0.3rem 0.2rem; }
+.offer small { display: block; font-size: 0.85rem; }
+.offer-a .label { color: rgba(255, 255, 255, 0.9); }
+.offer-b small { color: var(--muted); }
+@media (max-width: 560px) {
+  .offer { grid-template-columns: 1fr; }
+  .offer-a { clip-path: none; padding-right: 1.4rem; }
+  .offer-b { padding: 1.1rem 1.4rem; }
+}
+
+.jump { display: flex; flex-wrap: wrap; gap: 0.5rem 0.75rem; align-items: center; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block: 0.5rem 1rem; }
+.chips li, .chips button {
+  font: 500 0.88rem/1.2 var(--font); padding: 0.5rem 0.95rem; border-radius: 999px;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line);
+}
+.chips button { cursor: pointer; }
+.chips button:hover { border-color: var(--ink); }
+
+/* ---------- Section rows ---------- */
+.block { display: grid; gap: 1rem; padding-block: 2.5rem; border-top: 1px solid var(--line); }
+.block > * { min-width: 0; }
+@media (min-width: 880px) { .block { grid-template-columns: 220px minmax(0, 1fr); gap: 3rem; } }
+
+.steps { counter-reset: s; display: grid; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 2.75rem minmax(0, 1fr); padding-block: 1rem; border-bottom: 1px solid var(--line); }
+.steps li:first-child { padding-top: 0; }
+.steps li:last-child { border-bottom: 0; padding-bottom: 0; }
+.steps li::before {
+  content: counter(s); display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%;
+  background: var(--accent); color: var(--accent-ink); font: 700 0.9rem/1 var(--font);
+}
+.steps p { margin: 0 0 0.5rem; }
+.steps p:last-child { margin-bottom: 0; }
+
+.cards { display: grid; gap: 0.9rem; }
+@media (min-width: 700px) { .cards { grid-template-columns: 1fr 1fr; } }
+.card { background: var(--surface); border-radius: 12px; padding: 1rem 1.2rem; box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06); min-width: 0; }
+.card p { margin: 0; color: var(--muted); }
+.card dt { margin: 0 0 0.25rem; }
+.card dd { margin: 0; }
+
+.bullets { display: grid; gap: 0.5rem; margin-bottom: 1rem; max-width: 65ch; }
+.bullets li { position: relative; padding-left: 1.3rem; }
+.bullets li::before { content: ""; position: absolute; left: 0.2rem; top: 0.62em; width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--accent); }
+
+.note { background: var(--accent-soft); border-radius: 12px; padding: 0.9rem 1.1rem; max-width: 65ch; }
+.note p { margin: 0; }
+
+/* Closing orange card */
+.cta { background: linear-gradient(135deg, #FF5C14, #F24200); color: #FFFFFF; border-radius: 20px; padding: 2.2rem 1.6rem; margin-block: 1rem 3rem; }
+.cta h2 { font-size: clamp(1.7rem, 5vw, 2.4rem); line-height: 1.1; }
+.cta p { margin: 0.6rem 0 0; }
+
+.foot { border-top: 1px solid var(--line); padding-block: 1.5rem 2.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; justify-content: space-between; font-size: 0.9rem; color: var(--muted); }
+.foot nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+
+/* ---------- Copyright page: plain text, no decoration ---------- */
+.doc { max-width: 780px; padding-block: 2.5rem 3rem; }
+.doc p { max-width: none; font-size: 0.95rem; line-height: 1.7; margin: 0 0 1.1rem; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn, .chips button, .tabs a { transition: filter 0.15s, border-color 0.15s, color 0.15s; }
+}
+</style>
+
+<header class="bar">
+  <div class="wrap bar-in">
+    <a class="logo" href="https://snowx.com/en-US" target="_blank" rel="noopener" aria-label="SnowX">
+      <img src="data:image/png;base64,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" alt="SnowX" width="144" height="24">
+    </a>
+    <nav class="tabs" aria-label="Pages">
+      <a href="#rules" data-nav>Event rules</a>
+      <a href="#copyright" data-nav>Copyright &amp; authorization</a>
+    </nav>
+    <a class="btn sm" href="https://forms.gle/iRh5xib7t5Bp8xhe7" target="_blank" rel="noopener">Submit your model</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ===================== PAGE 1: EVENT RULES ===================== -->
+  <main data-view="rules">
+    <section class="hero">
+      <div>
+        <p class="label">Global creator campaign by SnowX</p>
+        <h1>Let’s Make It Metal</h1>
+        <p class="tagline">Your design. Real metal. Made by SnowX.</p>
+        <p class="lede">Have you ever built a 3D model and wondered how it would look as a real metal object? Submit your design for a chance to have it printed in metal, free of charge. If it is selected, we work with you to turn the file into a piece you can hold.</p>
+
+        <div class="offer">
+          <div class="offer-a">
+            <span class="label">Reward</span>
+            <strong>One free metal print</strong>
+            <small>per participant</small>
+          </div>
+          <div class="offer-b">
+            <span class="label">Submission period</span>
+            <strong>Nov 5 to Nov 30, 2026</strong>
+            <small>Rolling review, in order received</small>
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top:0">
+          <a class="btn" href="https://forms.gle/iRh5xib7t5Bp8xhe7" target="_blank" rel="noopener">Submit your model</a>
+          <a class="btn light" href="#copyright">Copyright terms</a>
+        </div>
+        <p class="fine">Printing spots are limited and submissions close once every spot is filled. Follow SnowX’s official channels for the latest updates.</p>
+      </div>
+    </section>
+
+    <div class="jump" style="padding-bottom:2rem">
+      <span class="label">Jump to</span>
+      <ul class="chips" style="margin:0">
+        <li><button type="button" data-scroll="r-enter">How to enter</button></li>
+        <li><button type="button" data-scroll="r-model">Model requirements</button></li>
+        <li><button type="button" data-scroll="r-print">Printing &amp; delivery</button></li>
+      </ul>
+    </div>
+
+    <section class="block">
+      <h2>Who can join</h2>
+      <div>
+        <p>The campaign is open to creators and 3D printing enthusiasts worldwide.</p>
+        <ul class="chips">
+          <li>3D designer or digital artist</li>
+          <li>Jewelry, product or industrial designer</li>
+          <li>Maker or DIY enthusiast</li>
+          <li>Model or toy creator</li>
+          <li>Craft artist or independent creator</li>
+          <li>Anyone curious about metal 3D printing</li>
+        </ul>
+        <p>Your design needs to meet the model requirements below, and you need the rights or permissions to submit it. See the <a href="#copyright">copyright terms</a> for the details.</p>
+      </div>
+    </section>
+
+    <section class="block" id="r-enter">
+      <h2>How to enter</h2>
+      <div>
+        <ol class="steps">
+          <li>
+            <div>
+              <h3>Prepare your design</h3>
+              <p>Choose a 3D model you would love to see in metal and check it against the model requirements below.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>Submit your entry</h3>
+              <p>Complete the SnowX Global Creator Submission Form with your contact details, your model file, and the rights and authorization information.</p>
+              <p><a class="btn sm" href="https://forms.gle/iRh5xib7t5Bp8xhe7" target="_blank" rel="noopener">Open the submission form</a></p>
+              <p class="fine">The form is the main way to enter. If you write to us by email or through a community channel, we may ask you to complete the form so we can register and review your entry.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>Wait for the review</h3>
+              <p>Our team reviews entries for creativity, completeness and suitability for metal 3D printing. We contact selected participants using the details in their submissions.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>Let’s make it metal</h3>
+              <p>If your design is selected, we confirm the printing details, the estimated production timeline and the delivery arrangements with you.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>Receive your metal creation</h3>
+              <p>Once printing and a basic quality check are complete, we arrange delivery according to the agreed plan.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Updates and questions</h2>
+      <div>
+        <p>Join the community for campaign updates and a place to talk with other creators.</p>
+        <ul class="bullets">
+          <li>Reddit: <a href="https://www.reddit.com/r/SnowX_Official/" target="_blank" rel="noopener">r/SnowX_Official</a></li>
+          <li>Discord: <a href="https://discord.gg/M7A7meHWs" target="_blank" rel="noopener">Join the SnowX Community</a></li>
+          <!-- To show WeChat, add the QR image or account name here and remove "hidden". -->
+          <li hidden>WeChat: </li>
+          <li>Email: <a href="mailto:make.it.metal@snowx.com">make.it.metal@snowx.com</a> for submissions and campaign questions</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>How we select</h2>
+      <div>
+        <p>Every entry is reviewed on a rolling basis. Only designs that pass review and receive an official selection notice qualify for the free print, so submitting does not guarantee selection.</p>
+        <dl class="cards" style="margin:0">
+          <div class="card"><dt><h3>Creativity</h3></dt><dd><p>An idea worth holding in metal.</p></dd></div>
+          <div class="card"><dt><h3>Completeness</h3></dt><dd><p>A finished model with clear geometry.</p></dd></div>
+          <div class="card"><dt><h3>Printing feasibility</h3></dt><dd><p>A design that metal 3D printing can produce.</p></dd></div>
+          <div class="card"><dt><h3>Campaign fit</h3></dt><dd><p>Overall suitability for Let’s Make It Metal.</p></dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="block" id="r-model">
+      <h2>Model requirements</h2>
+      <div>
+        <h3>Supported file formats</h3>
+        <ul class="chips">
+          <li>F3D</li><li>STEP</li><li>IGS / IGES</li><li>STL</li><li>OBJ</li><li>3MF</li><li>3DM</li>
+        </ul>
+        <h3>Maximum dimensions</h3>
+        <p>80 mm × 80 mm × 100 mm. The entire model must fit within this volume.</p>
+        <h3>Quality and printability</h3>
+        <ul class="bullets">
+          <li>The model has complete, clearly defined geometry.</li>
+          <li>The file has no major mesh errors, broken surfaces or other issues that block a proper evaluation.</li>
+          <li>The design is technically suitable for metal 3D printing.</li>
+          <li>Models that are too complex, exceed the size limit or pose significant printing challenges may not be selected.</li>
+        </ul>
+        <p>If needed, SnowX may ask you for more information, a revised file or an editable model file to assess printability.</p>
+        <h3>Rights</h3>
+        <p>You must be the original creator or hold the rights to submit the design. Designs that use third-party work, trademarks, logos, characters or recognizable brand designs need permission from the rights holder first. The <a href="#copyright">copyright terms</a> explain what to declare and what you authorize.</p>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Event rules</h2>
+      <dl class="cards" style="margin:0">
+        <div class="card"><dt><h3>Limited availability</h3></dt><dd><p>Printing spots are limited and allocated through rolling review. The campaign closes once every spot is filled.</p></dd></div>
+        <div class="card"><dt><h3>One print per participant</h3></dt><dd><p>You may submit several designs. Each participant can receive one free metal printing service during this campaign.</p></dd></div>
+        <div class="card"><dt><h3>Accurate information</h3></dt><dd><p>Give accurate contact details and the information we reasonably need to review and process your entry.</p></dd></div>
+        <div class="card"><dt><h3>Rights and permissions</h3></dt><dd><p>You own the rights to your design or hold the permissions to submit it and to grant the authorizations in the <a href="#copyright">copyright terms</a>.</p></dd></div>
+      </dl>
+    </section>
+
+    <section class="block" id="r-print">
+      <h2>Printing &amp; delivery</h2>
+      <div>
+        <h3>What selected participants receive</h3>
+        <ul class="bullets">
+          <li>One free metal 3D printing service for the selected design.</li>
+          <li>Standard post-processing, subject to technical evaluation and the needs of the design.</li>
+          <li>A basic quality inspection of the finished piece.</li>
+          <li>Selected content from the process and the finished piece, which may include printing progress footage and photos.</li>
+        </ul>
+        <h3>Production and delivery</h3>
+        <ul class="bullets">
+          <li>After selection, SnowX contacts you to confirm printing details, the estimated timeline and delivery.</li>
+          <li>Finished pieces ship worldwide.</li>
+          <li>Timelines vary with model complexity, material availability, production schedules, equipment maintenance and post-processing.</li>
+          <li>Final dimensions, surface finish and appearance can vary with the metal printing process and post-processing, so the piece may differ slightly from your digital model.</li>
+          <li>SnowX may feature selected designs and finished pieces on its social media channels and tags you when it does. The <a href="#copyright">copyright terms</a> have the details.</li>
+        </ul>
+        <div class="note"><p>This campaign offers a free metal 3D printing service. It does not include a free SnowPod printer or other printing equipment.</p></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Changes &amp; cancellation</h2>
+      <div>
+        <p>If a selected model cannot be printed because of technical issues, SnowX makes reasonable efforts to contact you and discuss revisions or alternatives. If the issue cannot be resolved, SnowX may cancel the printing arrangement for that design.</p>
+        <p>SnowX announces significant changes through its official channels or the contact details participants provided. Participation is subject to these rules, to the <a href="#copyright">copyright and authorization terms</a> and to any privacy notice SnowX gives you.</p>
+      </div>
+    </section>
+
+    <section class="cta">
+      <h2>Ready to turn your design into metal?</h2>
+      <p>Submit your model and let’s make it metal.</p>
+      <div class="actions" style="margin-bottom:0">
+        <a class="btn dark" href="https://forms.gle/iRh5xib7t5Bp8xhe7" target="_blank" rel="noopener">Submit your model</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== PAGE 2: COPYRIGHT & AUTHORIZATION (plain text) ===================== -->
+  <main data-view="copyright" class="doc" aria-label="Copyright and authorization terms" hidden>
+    <p><strong>Copyright &amp; Authorization Terms</strong> (Let’s Make It Metal, SnowX)</p>
+
+    <p>By submitting an entry you confirm that you have read and agree to these terms. If you do not agree, please do not submit. In short, you keep ownership of your design, SnowX uses your files to review and print them, and if your design is selected SnowX may feature it on its social media and tag you. SnowX has the right to decide which designs are selected and which are not. Participation is also subject to the <a href="#rules">event rules</a> and to any privacy notice SnowX gives you.</p>
+
+    <p><strong>1. Ownership.</strong> You retain ownership of the intellectual property rights in your submitted design, to the extent you own or control them. Submitting a design does not transfer ownership or copyright to SnowX. If your design includes third-party intellectual property, you are responsible for obtaining the permissions needed for the uses you authorize here.</p>
+
+    <p><strong>2. Authorization for review and printing.</strong> By submitting, you authorize SnowX to access, review and technically process your files to evaluate whether they suit this campaign. If your design is selected, you grant SnowX a limited, non-exclusive, royalty-free authorization to use, reproduce, process and modify the files only as far as reasonably necessary to prepare and evaluate the model for metal 3D printing, produce the selected design as part of this campaign, carry out quality checks and post-processing, and arrange delivery of the finished piece. This authorization covers only those purposes and the promotional use in clause 3. It gives SnowX no general right to sell, distribute, commercially exploit or sublicense your design.</p>
+
+    <p><strong>3. Promotional use.</strong> If your design is selected, you also authorize SnowX to showcase it, the printing process and the finished piece on SnowX’s official social media channels, website, campaign pages and other marketing materials. This includes posting images, renders, short videos and photos of your design and the printed piece, together with its title and a short description. SnowX credits you and tags you using the name or social media handle you provide in the submission form. This authorization is non-exclusive and royalty-free, and it applies for promoting this campaign and SnowX. It gives SnowX no right to sell or sublicense your design.</p>
+
+    <p><strong>4. Your confirmations.</strong> By submitting, you confirm that (a) your ownership is clear, meaning you created the design or hold complete and valid rights to it, with no undisclosed co-owners, commissioning parties or employer rights; (b) the design infringes nothing, meaning it does not infringe anyone’s copyright, design rights, patents, trademarks, likeness, reputation or trade secrets, and it contains nothing unlawful or contrary to public order; (c) you are free to authorize, meaning no earlier license, pledge or contract limits what you authorize here, and if the design was already released under an open license you disclose it and keep your authorization within that license; and (d) your materials are accurate, meaning designs that include people’s likenesses, third-party trademarks, brand marks, patented structures or other people’s work come with written permission submitted with your entry, and your files contain no malicious code.</p>
+
+    <p><strong>5. Declaring your work type.</strong> The submission form asks you to select the type that fits your design: original, co-created, licensed, derivative, open source, commissioned or work for hire. Please answer truthfully, because an inaccurate declaration counts as a breach. We may ask for supporting materials. For an original work, that means an editable source file (not only an STL), process records such as sketches, version screenshots and edit history, proof of completion or first publication date, and a registration certificate if you have one. For a co-created work, a co-creation agreement covering roles, contribution shares, credit, revenue and how rights are exercised, each party’s creation records, and written consent from all co-owners to this authorization. For a licensed work, the license or authorization from the original rights holder, the full chain of authorization, and the rights granted, including exclusivity, territory, term and whether sublicensing is allowed. For a derivative work, proof of ownership of the original, written permission from the original author to adapt it, and a statement of what is original with before and after comparison images. For an open-source work, the license text and version, the source link, download date and an attribution screenshot, and a self-check for NC, ND, SA or copyleft terms. For a commissioned work, the commission agreement stating ownership and permitted use, plus payment records and delivery acceptance. For a work for hire, proof of employment or project assignment, your employer’s confirmation of IP ownership or a reward agreement, and records of the equipment, materials and funding used.</p>
+
+    <p><strong>6. Open source designs.</strong> Open source does not mean giving up copyright, and it does not mean unlimited commercial use. If your design uses GPL, MIT, Apache, Creative Commons or a similar license, enter the license name and version and link to the license text when you submit. SnowX handles the common conditions as follows. BY: SnowX credits the author and source as the license requires. NC: SnowX makes no commercial use of the design. ND: SnowX makes no creative changes or remixes, only technical preparation for printing. SA: derivative works are released under the same license. GPL and other copyleft licenses: SnowX meets the license’s open-source obligations at no cost to you. Licenses are generally irrevocable. What you authorize here cannot go beyond the original license, any excess is void from the start, and disputes about that excess are yours to resolve. Please do not submit an open-source design as your own original work.</p>
+
+    <p><strong>7. Rights disputes.</strong> To report a copyright concern, write to <a href="mailto:make.it.metal@snowx.com">make.it.metal@snowx.com</a>. Please include proof of ownership (such as a registration certificate, drafts, originals, a lawful publication or the contract that gave you the rights), where the disputed design can be found, the right you claim and why, your contact details, and a statement that your information is true. SnowX handles a complaint in this order. First, within 3 business days of receiving complete materials, it completes a formal check and lists anything missing once so you can correct it. Second, if the complaint looks likely to succeed, it takes the design down, stops its use and notifies the submitter within 3 business days. Third, a submitter who disputes the claim has 5 business days to send a written counter-notice with proof of ownership or authorization. Fourth, within 10 business days of the counter-notice, SnowX completes its investigation and may suggest an administrative complaint, litigation or arbitration. Fifth, if there is no infringement the design is restored, and if there is infringement or no counter-notice arrives in time the design is permanently removed and its selection withdrawn. If the dispute enters court or administrative proceedings, the legally effective ruling controls, and keeping the design offline in the meantime is not a breach. As the source of the rights, you are responsible for handling disputes over your design. If a dispute leads to a claim, penalty or loss for SnowX, SnowX may seek recovery from you, including legal fees and reasonable expenses.</p>
+
+    <p><strong>8. Designs that are not selected.</strong> The printing and promotional authorizations never take effect for a design that is not selected, and SnowX stops using the files once it has made its decision. SnowX does not use unselected designs for anything outside this campaign. It deletes the files and supporting materials it holds within 6 months after the campaign ends, or sooner on your written request, except where the law requires retention. You can withdraw a submission in writing at any time before the decision. Any use before your request is not a breach, and SnowX makes no further use afterward. A substantially revised design counts as a new submission and goes through the confirmation and review again. Unless agreed in writing, unselected designs are not paid for, and modeling and shipping costs are yours.</p>
+
+    <p><strong>9. Breach.</strong> If a confirmation proves untrue or a design has a rights defect, SnowX may, separately or together, disqualify the entry or withdraw its selection, take the design down and stop its use, and seek compensation for its losses. Submitting false materials to win a selection can also lead to a report to the authorities and legal action. If SnowX uses your design beyond what you authorized, it stops immediately and takes responsibility, except where the overuse results from your failure to disclose the work type, an open-source license or an ownership limit. If any part of these terms is found invalid, the rest stays in force.</p>
+
+    <p><strong>10. Files and personal data.</strong> SnowX uses your name, contact details, location and shipping information only for registration, design review, production, delivery and campaign communications. Your model files are accessed only as needed for evaluation, technical processing and authorized printing, and SnowX does not share unpublished files publicly without your permission, unless disclosure is needed to deliver the campaign or the law allows or requires it. Where necessary, SnowX shares only what service providers need for technical processing, production or delivery. Personal information and files are kept only as long as reasonably necessary for administration, fulfillment, record keeping and legal compliance, under SnowX’s data management practices.</p>
+
+    <p><strong>11. Confirmation on submitting.</strong> When you submit through the official form, you confirm that you have read and agree to these terms, that your ownership is clear and your materials are accurate, and that you declared your work type truthfully. If your design uses an open or public license, you confirm that you named the license and version and understand that SnowX uses the design under that license’s conditions. You also understand that if your design is selected, SnowX may feature it on its social media channels and tag you, that if it is not selected the printing and promotional authorizations never take effect, and that if a copyright dispute arises you handle it as the source of the rights.</p>
+  </main>
+
+  <footer class="foot">
+    <span>© SnowX · Let’s Make It Metal</span>
+    <nav aria-label="Footer">
+      <a href="#rules">Event rules</a>
+      <a href="#copyright">Copyright &amp; authorization</a>
+      <a href="mailto:make.it.metal@snowx.com">make.it.metal@snowx.com</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+// Hash routing: only a plain #name travels with the artifact link, so the two
+// pages are #rules and #copyright. In-page jumps use scrollIntoView instead of
+// anchors, because an anchor hash would be read as a page name.
+(function () {
+  var views = Array.prototype.slice.call(document.querySelectorAll('[data-view]'));
+  var navs = Array.prototype.slice.call(document.querySelectorAll('[data-nav]'));
+  var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function route() {
+    var name = location.hash.slice(1);
+    var known = views.some(function (v) { return v.dataset.view === name; });
+    var active = known ? name : 'rules';
+    views.forEach(function (v) { v.hidden = v.dataset.view !== active; });
+    navs.forEach(function (a) {
+      if (a.getAttribute('href') === '#' + active) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    window.scrollTo(0, 0);
+  }
+
+  window.addEventListener('hashchange', route);
+  route();
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-scroll]') : null;
+    if (!b) return;
+    var el = document.getElementById(b.dataset.scroll);
+    if (el) el.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+  });
+})();
+</script>
